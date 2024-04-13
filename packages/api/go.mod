@@ -3,18 +3,24 @@ module quackstack.palk.me/api/v2
 go 1.22.0
 
 require (
+	github.com/gin-gonic/gin v1.9.1
+	github.com/google/go-github v17.0.0+incompatible
+	github.com/google/uuid v1.6.0
+	golang.org/x/oauth2 v0.19.0
+)
+
+require (
 	github.com/bytedance/sonic v1.11.3 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.9.1 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.19.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
-	github.com/google/go-github/v61 v61.0.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect

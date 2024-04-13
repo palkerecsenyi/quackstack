@@ -64,7 +64,7 @@ func PushRepo(c *gin.Context) {
 		shaString := resp.Metadata["sha"]
 		fileName := path.Base(fileKey)
 		commitMessage := "Quack"
-		_, _, err = ghClient.Repositories.UpdateFile(c.Request.Context(), req.Owner, req.Repo, path.Join(".github", "workflows", fileName), &gh.RepositoryContentFileOptions{
+		updateResp, _, err := ghClient.Repositories.UpdateFile(c.Request.Context(), req.Owner, req.Repo, path.Join(".github", "workflows", fileName), &gh.RepositoryContentFileOptions{
 			Content: fullContents,
 			SHA:     &shaString,
 			Message: &commitMessage,
@@ -72,6 +72,13 @@ func PushRepo(c *gin.Context) {
 
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("update file in github: %s", err))
+			return
+		}
+
+		fmt.Println(*updateResp.Message)
+		err = files.UpdateSHA(c.Request.Context(), req.Owner, req.Repo, fileName, *updateResp.SHA)
+		if err != nil {
+			c.String(http.StatusInternalServerError, fmt.Sprintf("update file sha in s3: %s", err))
 			return
 		}
 	}

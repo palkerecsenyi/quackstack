@@ -1,7 +1,3 @@
-import "./App.css";
-//import { NavBar } from "./components/NavBar";
-// index.js
-import "./styles.css";
 import { Navbar } from "./components/NavBar";
 
 function App() {

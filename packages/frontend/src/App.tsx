@@ -1,16 +1,10 @@
-import { Navbar } from "./components/NavBar";
-import { Editor } from "@monaco-editor/react";
+import { Homepage } from "./pages/homepage";
+import { CodeEditor } from "./pages/codeEditor";
 
 function App() {
   return (
-    <div>
-      <Navbar />
-      <Editor
-        height="100vh"
-        width="100%"
-        defaultLanguage="python"
-        theme="vs-dark"
-      />
+    <div className="bg-gray-800 min-h-screen">
+      <CodeEditor />
     </div>
   );
 }

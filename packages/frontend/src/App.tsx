@@ -3,7 +3,7 @@ import { CodeEditor } from "./pages/codeEditor";
 
 function App() {
   return (
-    <div className="bg-gray-800 min-h-screen">
+    <div className="bg-background opacity-95 min-h-screen">
       <CodeEditor />
     </div>
   );

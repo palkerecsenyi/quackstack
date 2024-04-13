@@ -9,11 +9,11 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ onClick }) => {
   return (
-    <div className="bg-gray-800 h-screen w-1/5">
+    <div className="bg-lightGray border border-gray-600 h-screen w-1/5">
       <ul className="py-4">
         <li>
           <button
-            className="px-4 py-2 text-white hover:bg-gray-300"
+            className="px-4 py-2 text-white hover:bg-gray-300 hover:text-black"
             onClick={() => onClick("index.html")}
           >
             index.html
@@ -21,7 +21,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onClick }) => {
         </li>
         <li>
           <button
-            className="px-4 py-2 text-white hover:bg-gray-300"
+            className="px-4 py-2 text-white hover:bg-gray-300 hover:text-black"
             onClick={() => onClick("script.py")}
           >
             script.py

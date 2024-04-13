@@ -1,4 +1,4 @@
-package api
+package main
 
 import (
 	"fmt"
@@ -11,5 +11,6 @@ func main() {
 
 	r := gin.Default()
 	r.GET("/auth/start", github.StartAuthFlow)
+	r.GET("/auth/callback", github.AuthCallback)
 	r.Run()
 }

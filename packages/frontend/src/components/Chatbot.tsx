@@ -59,8 +59,8 @@ export const Chatbot: React.FC<ChatbotProps> = ({ onClose }) => {
     <div className="chatbot-container bg-gray-800 h-screen flex flex-col relative">
       <div className="chat-header p-4 border-b border-gray-700 flex justify-between items-center">
         <p className="text-lg text-white">Quack Overflow</p>
-        <button onClick={onClose} className="close-btn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded">
-          Close
+        <button onClick={onClose} className="close-btn hover:bg-red-700 text-white font-bold py-2 px-3 rounded">
+          X
         </button>
       </div>
 
@@ -80,10 +80,10 @@ export const Chatbot: React.FC<ChatbotProps> = ({ onClose }) => {
           value={input}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          className="input-field flex-grow border-gray-400 px-1 bg-white h-12 rounded-l-lg"
+          className="input-field flex-grow border-gray-400 px-2 bg-white h-12 rounded-lg"
           placeholder="Type your message..."
         />
-        <button onClick={handleSubmit} className="send-btn bg-blue-500 hover:bg-blue-700 text-white font-bold px-1 py-3 rounded-r-lg">
+        <button onClick={handleSubmit} className="send-btn hover:bg-blue-700 text-white font-bold px-2 py-3 rounded-lg">
           Send
         </button>
       </div>

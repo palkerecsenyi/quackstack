@@ -25,6 +25,7 @@ func main() {
 	r.GET("/files", files.ListProjectFiles)
 
 	r.POST("/git/clone", git.CloneRepo)
+	r.POST("/git/push", git.PushRepo)
 
 	r.Run()
 

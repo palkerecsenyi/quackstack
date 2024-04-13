@@ -32,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onClick }) => {
         className="px-4 py-2 text-white hover:bg-gray-600 mt-2"
         onClick={() => setChatVisible(!chatVisible)}
       >
-        Chat with Bot
+        Chat with Quack Overflow
       </button>
       {/* Chatbot component */}
       {chatVisible && <Chatbot onClose={() => setChatVisible(false)} />}

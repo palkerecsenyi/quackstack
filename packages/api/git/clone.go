@@ -48,7 +48,8 @@ func CloneRepo(c *gin.Context) {
 			return
 		}
 
-		err = files.SaveFilePorcelain(c.Request.Context(), req.Owner, req.Repo, *file.Name, content)
+		fileName := *file.Name
+		err = files.SaveFilePorcelain(c.Request.Context(), req.Owner, req.Repo, fileName, content, *file.SHA)
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("save file: %s", err))
 			return

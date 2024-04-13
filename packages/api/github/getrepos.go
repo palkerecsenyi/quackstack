@@ -13,7 +13,7 @@ type RepositoryInfo struct {
 }
 
 func GetRepos(c *gin.Context) {
-	client := getGitHubClient(c)
+	client := GetGitHubClient(c)
 	if client == nil {
 		c.String(http.StatusBadRequest, "client not initialised")
 		return

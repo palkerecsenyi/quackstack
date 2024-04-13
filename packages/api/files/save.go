@@ -1,6 +1,7 @@
 package files
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -26,13 +27,7 @@ func SaveFile(c *gin.Context) {
 	var req SaveFileRequest
 	c.ShouldBind(&req)
 
-	path := calculateFilePath(userId, req.ProjectId, req.FileName)
-	bucket := env.GetFileBucket()
-	_, err = GetS3Client().PutObject(c.Request.Context(), &s3.PutObjectInput{
-		Bucket: &bucket,
-		Key:    &path,
-		Body:   strings.NewReader(req.Contents),
-	})
+	err = SaveFilePorcelain(c.Request.Context(), userId, req.ProjectId, req.FileName, req.Contents)
 
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
@@ -40,4 +35,16 @@ func SaveFile(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+func SaveFilePorcelain(ctx context.Context, user, project, fileName, content string) error {
+	path := calculateFilePath(user, project, fileName)
+	bucket := env.GetFileBucket()
+	_, err := GetS3Client().PutObject(ctx, &s3.PutObjectInput{
+		Bucket: &bucket,
+		Key:    &path,
+		Body:   strings.NewReader(content),
+	})
+
+	return err
 }

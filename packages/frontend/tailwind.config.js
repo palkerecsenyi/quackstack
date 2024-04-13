@@ -4,7 +4,6 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-			// Sports
 			darkGreen: "#719230",
 			lightGreen: "#B6CF6A",
 			cream: "#FFFFBF",

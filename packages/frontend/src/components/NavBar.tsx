@@ -11,7 +11,7 @@ export function Navbar() {
 						className="text-cream hover:text-gray-300 mx-3 font-bold"
 						to="/"
 					>
-						Home
+						QuackStack
 					</Link>
 					<Link
 						className="text-cream hover:text-gray-300 mx-3 font-bold"

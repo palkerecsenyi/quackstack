@@ -1,10 +1,16 @@
 import { Navbar } from "./components/NavBar";
+import { Editor } from "@monaco-editor/react";
 
 function App() {
   return (
-    <div className="bg-gray-100 p-4">
-      <h1 className="text-2xl font-bold text-gray-800">Hello, Tailwind CSS!</h1>
+    <div>
       <Navbar />
+      <Editor
+        height="100vh"
+        width="100%"
+        theme="vs-dark"
+        defaultLanguage="python"
+      />
     </div>
   );
 }

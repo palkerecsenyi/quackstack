@@ -17,16 +17,21 @@ type SaveFileRequest struct {
 }
 
 func SaveFile(c *gin.Context) {
-	userId := github.GetUserId(c)
+	userId, err := github.GetUserId(c)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	var req SaveFileRequest
 	c.ShouldBind(&req)
 
 	path := calculateFilePath(userId, req.ProjectId, req.FileName)
 	bucket := env.GetFileBucket()
-	_, err := GetS3Client().PutObject(c.Request.Context(), &s3.PutObjectInput{
+	_, err = GetS3Client().PutObject(c.Request.Context(), &s3.PutObjectInput{
 		Bucket: &bucket,
-		Key: &path,
-		Body: strings.NewReader(req.Contents),
+		Key:    &path,
+		Body:   strings.NewReader(req.Contents),
 	})
 
 	if err != nil {

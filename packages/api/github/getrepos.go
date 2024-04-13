@@ -12,9 +12,8 @@ type RepositoryInfo struct {
 	FullName string
 }
 
-func Getrepos() {
+func GetRepos(token string) {
 	// get github
-	token := "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"
 
 	// Setup the OAuth2 configuration
 	ctx := context.Background()

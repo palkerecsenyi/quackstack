@@ -33,8 +33,8 @@ export function CodeEditor() {
     <div>
       <Navbar />
       <div className="flex">
-        <Sidebar onClick={setFileName} />
-        <div className="w-4/5">
+        <Sidebar onClick={setFileName} files={files} />
+        <div className="w-4/5 relative">
           <Editor
             height="100vh"
             width="100%"
@@ -47,6 +47,10 @@ export function CodeEditor() {
         </div>
       </div>
       <button onClick={() => getEditorValue()}>Get editor value</button>
+      <img
+        src={`../../images/duck.svg`}
+        className="absolute bottom-0 right-10 w-28"
+      />
     </div>
   );
 }

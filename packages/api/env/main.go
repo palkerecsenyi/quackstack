@@ -25,3 +25,7 @@ func GetGitHubRedirect() string {
 func GetFileBucket() string {
 	return os.Getenv("QUACK_S3_BUCKET")
 }
+
+func GetChatbotScriptPath() string {
+	return os.Getenv("QUACK_CHATBOT_PY")
+}

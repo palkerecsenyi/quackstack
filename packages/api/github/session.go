@@ -1,0 +1,35 @@
+package github
+
+import (
+	"errors"
+	"fmt"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/go-github/github"
+)
+
+func getUserId(c *gin.Context) string {
+	// TODO: read GitHub auth cookie, return what the user's GitHub user ID is
+	return "palpal"
+}
+
+func getGitHubClient(c *gin.Context) *github.Client {
+	accessToken := getAccessToken(c)
+	if accessToken == "" {
+		return nil
+	}
+	return GetClient(c.Request.Context(), accessToken)
+}
+
+func getAccessToken(c *gin.Context) string {
+	cookie, err := c.Cookie("gh_token")
+	if errors.Is(err, http.ErrNoCookie) {
+		return ""
+	}
+	if err != nil {
+		panic(fmt.Sprintf("failed to get access token: %s", err))
+	}
+
+	return cookie
+}

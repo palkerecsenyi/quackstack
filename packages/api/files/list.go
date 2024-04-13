@@ -1,6 +1,7 @@
 package files
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -21,22 +22,30 @@ func ListProjectFiles(c *gin.Context) {
 		return
 	}
 
+	fileKeys, err := ListProjectFilesPorcelain(c.Request.Context(), userId, projectId)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, fileKeys)
+}
+
+func ListProjectFilesPorcelain(ctx context.Context, user, project string) ([]string, error) {
 	client := GetS3Client()
-	prefix := calculateFilePath(userId, projectId, "")
+	prefix := calculateFilePath(user, project, "")
 	bucket := env.GetFileBucket()
-	resp, err := client.ListObjectsV2(c.Request.Context(), &s3.ListObjectsV2Input{
+	resp, err := client.ListObjectsV2(ctx, &s3.ListObjectsV2Input{
 		Bucket: &bucket,
 		Prefix: &prefix,
 	})
 	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
+		return nil, err
 	}
 
 	fileKeys := []string{}
 	for _, obj := range resp.Contents {
 		fileKeys = append(fileKeys, *obj.Key)
 	}
-
-	c.JSON(http.StatusOK, fileKeys)
+	return fileKeys, nil
 }

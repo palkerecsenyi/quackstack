@@ -27,7 +27,7 @@ func SaveFile(c *gin.Context) {
 	var req SaveFileRequest
 	c.ShouldBind(&req)
 
-	err = SaveFilePorcelain(c.Request.Context(), userId, req.ProjectId, req.FileName, req.Contents)
+	err = SaveFilePorcelain(c.Request.Context(), userId, req.ProjectId, req.FileName, req.Contents, "")
 
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
@@ -37,14 +37,23 @@ func SaveFile(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func SaveFilePorcelain(ctx context.Context, user, project, fileName, content string) error {
+func SaveFilePorcelain(ctx context.Context, user, project, fileName, content, sha string) error {
 	path := calculateFilePath(user, project, fileName)
 	bucket := env.GetFileBucket()
-	_, err := GetS3Client().PutObject(ctx, &s3.PutObjectInput{
+
+	input := s3.PutObjectInput{
 		Bucket: &bucket,
 		Key:    &path,
 		Body:   strings.NewReader(content),
-	})
+	}
+
+	if sha != "" {
+		input.Metadata = map[string]string{
+			"sha": sha,
+		}
+	}
+
+	_, err := GetS3Client().PutObject(ctx, &input)
 
 	return err
 }

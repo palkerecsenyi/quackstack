@@ -1,7 +1,15 @@
 package api
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"quackstack.palk.me/api/v2/github"
+)
 
 func main() {
-	fmt.Println("hi")
+	fmt.Println("Launching...")
+
+	r := gin.Default()
+	r.GET("/auth/start", github.StartAuthFlow)
+	r.Run()
 }

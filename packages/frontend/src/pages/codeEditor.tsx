@@ -26,7 +26,6 @@ export function CodeEditor() {
   }
 
   function getEditorValue() {
-
     alert(editorRef.current.getValue());
   }
 
@@ -46,6 +45,10 @@ export function CodeEditor() {
             defaultValue={file.value}
           />
         </div>
+        <img
+          src="../../images/duck.svg"
+          className="absolute bottom-0 right-10 w-28"
+        />
       </div>
       <button onClick={() => getEditorValue()}>Get editor value</button>
     </div>

@@ -1,10 +1,10 @@
 package github
 
 import (
-	"context"
 	"fmt"
-	"github.com/google/go-github/github"
-	"golang.org/x/oauth2"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Define a struct to hold the repository details you want to return
@@ -12,21 +12,15 @@ type RepositoryInfo struct {
 	FullName string
 }
 
-func GetRepos(token string) {
-	// get github
-
-	// Setup the OAuth2 configuration
-	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: token},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-
-	// Create a new GitHub client with the OAuth2 client
-	client := github.NewClient(tc)
+func GetRepos(c *gin.Context) {
+	client := getGitHubClient(c)
+	if client == nil {
+		c.String(http.StatusBadRequest, "client not initialised")
+		return
+	}
 
 	// Fetch all repositories for the authenticated user
-	repos, _, err := client.Repositories.List(ctx, "", nil)
+	repos, _, err := client.Repositories.List(c.Request.Context(), "", nil)
 	if err != nil {
 		fmt.Printf("Error fetching repositories: %s\n", err)
 		return

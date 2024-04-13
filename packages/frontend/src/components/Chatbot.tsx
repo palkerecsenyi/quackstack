@@ -8,6 +8,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ onClose }) => {
   const [input, setInput] = useState<string>('');
   const [messages, setMessages] = useState<Array<{ text: string; sender: string }>>([]);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
+  const maxMessages = 10;  // Define the maximum number of messages to display
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -25,7 +26,12 @@ export const Chatbot: React.FC<ChatbotProps> = ({ onClose }) => {
     if (!input.trim()) return;
     const userMessage = { text: input, sender: "user" };
     const botResponse = { text: `Quack: ${input}`, sender: "bot" };
-    setMessages([...messages, userMessage, botResponse]);
+    const newMessages = [...messages, userMessage, botResponse];
+    if (newMessages.length > maxMessages) {
+      // Remove the oldest messages to maintain the maxMessages limit
+      newMessages.splice(0, newMessages.length - maxMessages);
+    }
+    setMessages(newMessages);
     setInput('');
   };
 
@@ -47,7 +53,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ onClose }) => {
         </button>
       </div>
 
-      <div className="messages-container overflow-y-auto p-4 flex-grow ">
+      <div className="messages-container overflow-y-auto p-4 flex-grow">
         {messages.map((message, index) => (
           <div key={index}
                className={`message ${message.sender === "user" ? "bg-blue-100" : "bg-green-100"} my-2 p-2 rounded`}>

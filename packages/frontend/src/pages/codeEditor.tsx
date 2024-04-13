@@ -26,6 +26,7 @@ export function CodeEditor() {
   }
 
   function getEditorValue() {
+
     alert(editorRef.current.getValue());
   }
 

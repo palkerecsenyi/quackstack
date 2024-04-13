@@ -8,8 +8,11 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
-  "workspaces": ["packages/frontend"],
+  "workspaces": [
+    "packages/frontend"
+  ],
   "dependencies": {
-    "@monaco-editor/react": "^4.6.0"
+    "@monaco-editor/react": "^4.6.0",
+    "bun": "^1.1.3"
   }
 }

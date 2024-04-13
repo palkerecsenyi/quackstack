@@ -9,9 +9,17 @@ import (
 	"github.com/google/go-github/github"
 )
 
-func getUserId(c *gin.Context) string {
-	// TODO: read GitHub auth cookie, return what the user's GitHub user ID is
-	return "palpal"
+func GetUserId(c *gin.Context) (string, error) {
+	client := getGitHubClient(c)
+	if client == nil {
+		return "", nil
+	}
+
+	user, _, err := client.Users.Get(c.Request.Context(), "")
+	if err != nil {
+		return "", err
+	}
+	return *user.Login, nil
 }
 
 func getGitHubClient(c *gin.Context) *github.Client {

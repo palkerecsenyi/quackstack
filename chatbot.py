@@ -1,5 +1,7 @@
 from openai import OpenAI
 import os
+import sys
+import json
 
 #DEFINES CONSTANTS USED IN REST OF FUNCTION
 instructions = "You are helping with programming help for the CI/CD pipeline pretending you are a duck." \
@@ -9,7 +11,6 @@ instructions = "You are helping with programming help for the CI/CD pipeline pre
 client = OpenAI(
     api_key="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"
 )
-
 
 def transcribe_audio(audio_file_path):
     with open(audio_file_path, 'rb') as audio_file:
@@ -42,12 +43,11 @@ def get_response(user_input, code):
     if os.path.exists(user_input):
         duck_interpretation = transcribe_audio(user_input)
 
-    return ask_question(duck_interpretation, code), duck_interpretation
+    response = ask_question(duck_interpretation, code)
+    return json.dumps({"answer": response, "interpretation": duck_interpretation})
 
-#tests
-audio_file_path = "test_recording.m4a"
-code = "def create_drama(new_drama): drama.append(new_drama)"
-#test text
-print(get_response("What is the easiest way to test my code coverage?", code))
-#test audio --> "How do I get this code to work?"
-print(get_response(audio_file_path, code))
+if __name__ == "__main__":
+    user_input = sys.argv[1]
+    code = sys.argv[2]
+
+    print(get_response(user_input, code))

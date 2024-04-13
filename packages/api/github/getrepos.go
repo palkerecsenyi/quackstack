@@ -42,7 +42,6 @@ func GetRepos(token string) {
 
 	// Print the repositories
 	for _, repo := range myRepos {
-		fmt.Printf("\nFull Name: %s",
-			repo.FullName)
+		fmt.Printf("\nFull Name: %s", repo.FullName)
 	}
 }

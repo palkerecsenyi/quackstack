@@ -26,6 +26,7 @@ func StartAuthFlow(c *gin.Context) {
 	q := u.Query()
 	q.Add("client_id", os.Getenv("QUACK_GITHUB_CLIENT"))
 	q.Add("redirect_uri", env.GetGitHubRedirect())
+	q.Add("scope", "user,contents:read")
 
 	state := generateState()
 	q.Add("state", state)

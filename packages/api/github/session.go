@@ -10,7 +10,7 @@ import (
 )
 
 func GetUserId(c *gin.Context) (string, error) {
-	client := getGitHubClient(c)
+	client := GetGitHubClient(c)
 	if client == nil {
 		return "", nil
 	}
@@ -22,12 +22,12 @@ func GetUserId(c *gin.Context) (string, error) {
 	return *user.Login, nil
 }
 
-func getGitHubClient(c *gin.Context) *github.Client {
+func GetGitHubClient(c *gin.Context) *github.Client {
 	accessToken := getAccessToken(c)
 	if accessToken == "" {
 		return nil
 	}
-	return GetClient(c.Request.Context(), accessToken)
+	return GetClientForToken(c.Request.Context(), accessToken)
 }
 
 func getAccessToken(c *gin.Context) string {

@@ -21,3 +21,7 @@ func GetClientSecret() string {
 func GetGitHubRedirect() string {
 	return os.Getenv("QUACK_GITHUB_REDIRECT")
 }
+
+func GetFileBucket() string {
+	return os.Getenv("QUACK_S3_BUCKET")
+}

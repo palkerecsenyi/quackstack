@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import Chatbot from "./Chatbot";
 import { randomChoose } from "../data/randomUtil";
 import DuckStatic from "../assets/duck.svg";
-import DuckFly from "../assets/duck_fly.webp";
 import DuckWalk from "../assets/duck_walk.webp";
+import Wave from "./Wave";
 
 enum DuckDirection {
 	Right,
@@ -110,7 +110,9 @@ export default function Duck({
 				/>
 			)}
 
-			<div className="fixed bottom-0 left-0 h-10 w-full bg-blue-500/80 z-10" />
+			<div className="fixed bottom-10 left-0 w-full h-[50px] z-20">
+				<Wave />
+			</div>
 			<img
 				src={duckImageSrc}
 				className="fixed bottom-0 right-10 w-28 z-10 cursor-pointer"

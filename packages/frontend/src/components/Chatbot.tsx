@@ -4,6 +4,7 @@ import { useImmer } from "use-immer";
 import { v4 as uuid } from "uuid";
 import APIClient from "../data/client";
 import Markdown from "react-markdown";
+import QuackSound from "../assets/quack.m4a";
 
 export default function Chatbot({
 	onClose,
@@ -53,6 +54,9 @@ export default function Chatbot({
 					content: resp,
 				});
 			});
+
+			const audio = new Audio(QuackSound);
+			await audio.play();
 		},
 		[newMessageText, repo, currentFileName, messages],
 	);

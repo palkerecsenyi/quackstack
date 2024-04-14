@@ -1,13 +1,30 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { CodeEditor } from "./pages/codeEditor";
+import AuthProvider from "./pages/auth";
+import { GitLogIn } from "./pages/gitLogIn";
+import ProjectSelector from "./pages/projectList";
 
 const router = createBrowserRouter([
 	{
+		path: "/signin",
+		element: <GitLogIn />,
+	},
+	{
 		path: "/",
-		element: <App />,
+		element: <AuthProvider />,
+		children: [
+			{
+				path: "/",
+				element: <ProjectSelector />,
+			},
+			{
+				path: "/code/:owner/:repo",
+				element: <CodeEditor />,
+			},
+		],
 	},
 ]);
 

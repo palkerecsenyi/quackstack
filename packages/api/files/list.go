@@ -2,6 +2,7 @@ package files
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -34,6 +35,7 @@ func ListProjectFiles(c *gin.Context) {
 func ListProjectFilesPorcelain(ctx context.Context, user, project string) ([]string, error) {
 	client := GetS3Client()
 	prefix := calculateFilePath(user, project, "")
+	fmt.Println(prefix)
 	bucket := env.GetFileBucket()
 	resp, err := client.ListObjectsV2(ctx, &s3.ListObjectsV2Input{
 		Bucket: &bucket,

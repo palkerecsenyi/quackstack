@@ -78,5 +78,6 @@ func AuthCallback(c *gin.Context) {
 
 	accessToken := q.Get("access_token")
 	c.SetCookie("gh_token", accessToken, 1*60*60, "/", env.GetClientDomain(), false, true)
+	c.SetCookie("gh_state", "", -1, "/", env.GetClientDomain(), false, true)
 	c.Redirect(http.StatusTemporaryRedirect, env.GetClientOrigin())
 }

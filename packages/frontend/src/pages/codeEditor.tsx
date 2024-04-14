@@ -1,56 +1,115 @@
-import { Navbar } from "../components/NavBar";
-import { Editor } from "@monaco-editor/react";
-import { useState, useRef } from "react";
-import { Sidebar } from "../components/sidebar";
-
-const files = {
-  "script.py": {
-    name: "script.py",
-    langauge: "python",
-    value: "Here is some python text",
-  },
-  "index.html": {
-    name: "index.html",
-    langauge: "html",
-    value: "<div></div>",
-  },
-};
+import { Editor, Monaco } from "@monaco-editor/react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import Sidebar from "../components/sidebar";
+import { useParams } from "react-router-dom";
+import { editor } from "monaco-editor";
+import APIClient from "../data/client";
 
 export function CodeEditor() {
-  const [filename, setFileName] = useState("script.py");
-  const editorRef = useRef(null);
-  const file = files[filename as keyof typeof files];
+	const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
-  function handleEditorDidMount(editor, monaco) {
-    editorRef.current = editor;
-  }
+	const { owner, repo } = useParams<{ owner: string; repo: string }>();
+	const [loading, setLoading] = useState<string>();
 
-  function getEditorValue() {
-    alert(editorRef.current.getValue());
-  }
+	const [files, setFiles] = useState<string[]>([]);
+	const [selectedFile, setSelectedFile] = useState<string>();
 
-  return (
-    <div>
-      <Navbar />
-      <div className="flex">
-        <Sidebar onClick={setFileName} />
-        <div className="w-4/5">
-          <Editor
-            height="100vh"
-            width="100%"
-            theme="vs-dark"
-            onMount={handleEditorDidMount}
-            path={file.name}
-            defaultLanguage={file.langauge}
-            defaultValue={file.value}
-          />
-        </div>
-        <img
-          src="../../images/duck.svg"
-          className="absolute bottom-0 right-10 w-28"
-        />
-      </div>
-      <button onClick={() => getEditorValue()}>Get editor value</button>
-    </div>
-  );
+	const handleEditorDidMount = useCallback(
+		(editor: editor.IStandaloneCodeEditor, _: Monaco) => {
+			editorRef.current = editor;
+		},
+		[],
+	);
+
+	useEffect(() => {
+		if (!owner || !repo) return;
+		(async () => {
+			const c = new APIClient();
+
+			setLoading("Cloning...");
+			await c.cloneRepo(owner, repo);
+			setLoading("Loading files...");
+			const resp = await c.listFiles(repo);
+			setFiles(resp);
+			setLoading(undefined);
+		})();
+	}, [owner, repo]);
+
+	useEffect(() => {
+		const e = editorRef.current;
+		if (!selectedFile || !repo || !e) return;
+
+		(async () => {
+			setLoading("Loading file contents...");
+			const resp = await new APIClient().getFileContents(repo, selectedFile);
+			setLoading(undefined);
+			e.setValue(resp);
+		})();
+	}, [selectedFile, editorRef, repo]);
+
+	const [timeout, setTimeoutId] = useState<Timer>();
+	const [saveLoading, setSaveLoading] = useState(false);
+	const onEditorChange = useCallback(
+		(value: string | undefined) => {
+			if (timeout) {
+				clearTimeout(timeout);
+				setTimeoutId(undefined);
+			}
+
+			if (value === undefined || !repo || !selectedFile) return;
+			setTimeoutId(
+				setTimeout(async () => {
+					setSaveLoading(true);
+					await new APIClient().saveFileContents(repo, selectedFile, value);
+					setSaveLoading(false);
+				}, 2000),
+			);
+		},
+		[repo, selectedFile, timeout],
+	);
+
+	const onSaveClick = useCallback(async () => {
+		if (!owner || !repo) return
+
+		setLoading("Pushing changes...")
+		await new APIClient().pushRepo(owner, repo)
+		setLoading(undefined)
+	}, [owner, repo])
+
+	return (
+		<>
+			{loading && (
+				<div className="fixed top-0 left-0 h-screen w-screen backdrop-brightness-75 backdrop-blur-md z-10">
+					<p className="text-center mt-20 text-2xl text-white">{loading}</p>
+				</div>
+			)}
+
+			{saveLoading && (
+				<p className="fixed top-4 left-4 text-white">Saving...</p>
+			)}
+
+			<div className="flex">
+				<Sidebar
+					onSaveClick={onSaveClick}
+					onClick={setSelectedFile}
+					files={files}
+					selectedFile={selectedFile}
+				/>
+				<div className="w-4/5">
+					<Editor
+						height="100vh"
+						width="100%"
+						theme="vs-dark"
+						onMount={handleEditorDidMount}
+						onChange={onEditorChange}
+						path={selectedFile}
+					/>
+				</div>
+				<img
+					src="../../images/duck.svg"
+					className="absolute bottom-0 right-10 w-28"
+				/>
+			</div>
+		</>
+	);
 }

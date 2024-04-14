@@ -12,7 +12,7 @@ import (
 func GetUserId(c *gin.Context) (string, error) {
 	client := GetGitHubClient(c)
 	if client == nil {
-		return "", nil
+		return "", fmt.Errorf("no token provided")
 	}
 
 	user, _, err := client.Users.Get(c.Request.Context(), "")
@@ -40,4 +40,16 @@ func getAccessToken(c *gin.Context) string {
 	}
 
 	return cookie
+}
+
+func IsSignedIn(c *gin.Context) {
+	x, err := GetUserId(c)
+	if err != nil {
+		c.JSON(http.StatusOK, false)
+		return
+	}
+
+	fmt.Println(x)
+
+	c.JSON(http.StatusOK, true)
 }

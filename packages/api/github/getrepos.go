@@ -9,7 +9,7 @@ import (
 
 // Define a struct to hold the repository details you want to return
 type RepositoryInfo struct {
-	FullName string
+	FullName string `json:"name"`
 }
 
 func GetRepos(c *gin.Context) {
@@ -34,8 +34,5 @@ func GetRepos(c *gin.Context) {
 		})
 	}
 
-	// Print the repositories
-	for _, repo := range myRepos {
-		fmt.Printf("\nFull Name: %s", repo.FullName)
-	}
+	c.JSON(http.StatusOK, myRepos)
 }

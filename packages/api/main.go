@@ -3,9 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"quackstack.palk.me/api/v2/chatbot"
+	"quackstack.palk.me/api/v2/env"
 	"quackstack.palk.me/api/v2/files"
 	"quackstack.palk.me/api/v2/git"
 	"quackstack.palk.me/api/v2/github"
@@ -16,6 +19,12 @@ func main() {
 	files.InitS3Client(context.Background())
 
 	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{env.GetClientOrigin()},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
 	r.GET("/auth/start", github.StartAuthFlow)
 	r.GET("/auth/callback", github.AuthCallback)
 	r.GET("/auth/check", github.IsSignedIn)

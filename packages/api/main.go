@@ -23,8 +23,7 @@ func main() {
 		AllowOrigins:     []string{env.GetClientOrigin()},
 		AllowCredentials: true,
 		AllowMethods:     []string{"GET", "POST", "PUT", "OPTIONS"},
-		AllowHeaders:     []string{"Authorization", "Cookie"},
-		MaxAge:           12 * time.Hour,
+		AllowHeaders:     []string{"Cookie"},
 	}))
 
 	r.GET("/auth/start", github.StartAuthFlow)

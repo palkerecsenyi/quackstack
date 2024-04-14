@@ -22,7 +22,7 @@ func main() {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{env.GetClientOrigin()},
 		AllowCredentials: true,
-		AllowMethods:     []string{"GET", "POST", "PUT"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "OPTIONS"},
 		AllowHeaders:     []string{"Authorization"},
 		MaxAge:           12 * time.Hour,
 	}))

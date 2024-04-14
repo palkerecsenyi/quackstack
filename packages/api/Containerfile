@@ -18,6 +18,8 @@ RUN pip install openai
 WORKDIR /opt/app
 COPY --from=gobuild /usr/local/bin/app /opt/app/
 COPY --from=gobuild /usr/src/app/chatbot/chatbot.py /opt/app/
+
+ENV GIN_MODE=release
 ENV QUACK_CHATBOT_PY=/opt/app/chatbot.py
 
 CMD [ "/opt/app/app" ]

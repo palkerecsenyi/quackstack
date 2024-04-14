@@ -75,7 +75,6 @@ func PushRepo(c *gin.Context) {
 			return
 		}
 
-		fmt.Println(*updateResp.Message)
 		err = files.UpdateSHA(c.Request.Context(), req.Owner, req.Repo, fileName, *updateResp.SHA)
 		if err != nil {
 			c.String(http.StatusInternalServerError, fmt.Sprintf("update file sha in s3: %s", err))

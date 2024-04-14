@@ -81,4 +81,11 @@ func PushRepo(c *gin.Context) {
 		c.String(http.StatusInternalServerError, fmt.Sprintf("delete files in s3: %s", err))
 		return
 	}
+
+	err = CloneRepoPorcelain(c.Request.Context(), ghClient, req.Owner, req.Repo)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+	}
+
+	c.Status(http.StatusNoContent)
 }

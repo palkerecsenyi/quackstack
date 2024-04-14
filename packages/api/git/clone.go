@@ -1,7 +1,7 @@
 package git
 
 import (
-	"fmt"
+	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,37 +22,43 @@ func CloneRepo(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-
 	ghClient := github.GetGitHubClient(c)
 	if ghClient == nil {
 		c.String(http.StatusBadRequest, "no gh client")
 		return
 	}
 
-	_, dir, _, err := ghClient.Repositories.GetContents(c.Request.Context(), req.Owner, req.Repo, ".github/workflows", &gh.RepositoryContentGetOptions{})
+	err = CloneRepoPorcelain(c.Request.Context(), ghClient, req.Owner, req.Repo)
 	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
+		c.String(http.StatusInternalServerError, err.Error())
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func CloneRepoPorcelain(ctx context.Context, ghClient *gh.Client, owner, repo string) error {
+	_, dir, _, err := ghClient.Repositories.GetContents(ctx, owner, repo, ".github/workflows", &gh.RepositoryContentGetOptions{})
+	if err != nil {
+		return err
 	}
 
 	for _, file := range dir {
-		fileDetail, _, _, err := ghClient.Repositories.GetContents(c.Request.Context(), req.Owner, req.Repo, *file.Path, &gh.RepositoryContentGetOptions{})
+		fileDetail, _, _, err := ghClient.Repositories.GetContents(ctx, owner, repo, *file.Path, &gh.RepositoryContentGetOptions{})
 		if err != nil {
-			c.String(http.StatusInternalServerError, fmt.Sprintf("download file: %s", err))
-			return
+			return err
 		}
 
 		content, err := fileDetail.GetContent()
 		if err != nil {
-			c.String(http.StatusInternalServerError, fmt.Sprintf("decode file: %s", err))
-			return
+			return err
 		}
 
 		fileName := *file.Name
-		err = files.SaveFilePorcelain(c.Request.Context(), req.Owner, req.Repo, fileName, content, *file.SHA)
+		err = files.SaveFilePorcelain(ctx, owner, repo, fileName, content, *file.SHA)
 		if err != nil {
-			c.String(http.StatusInternalServerError, fmt.Sprintf("save file: %s", err))
-			return
+			return err
 		}
 	}
+
+	return nil
 }

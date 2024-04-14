@@ -62,7 +62,7 @@ export function CodeEditor() {
 					setSaveLoading(true);
 					await new APIClient().saveFileContents(repo, selectedFile, value);
 					setSaveLoading(false);
-				}, 2000),
+				}, 1000),
 			);
 		},
 		[repo, selectedFile, timeout],

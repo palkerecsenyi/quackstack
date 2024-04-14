@@ -1,12 +1,12 @@
 package files
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/net/context"
 	"quackstack.palk.me/api/v2/env"
 	"quackstack.palk.me/api/v2/github"
 )
@@ -26,24 +26,31 @@ func GetFileContents(c *gin.Context) {
 		return
 	}
 
+	fullBody, err := GetFileContentsPorcelain(c.Request.Context(), userId, projectId, fileName)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.String(http.StatusOK, string(fullBody))
+}
+
+func GetFileContentsPorcelain(ctx context.Context, userId, projectId, fileName string) (string, error) {
 	client := GetS3Client()
 	bucket := env.GetFileBucket()
 	key := calculateFilePath(userId, projectId, fileName)
-	resp, err := client.GetObject(c.Request.Context(), &s3.GetObjectInput{
+	resp, err := client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: &bucket,
 		Key:    &key,
 	})
 
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
+		return "", err
 	}
 
 	fullBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		c.String(http.StatusInternalServerError, fmt.Sprintf("reading body: %s", err))
-		return
+		return "", err
 	}
 
-	c.String(http.StatusOK, string(fullBody))
+	return string(fullBody), nil
 }

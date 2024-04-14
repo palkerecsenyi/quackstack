@@ -1,4 +1,5 @@
 import wretch, { Wretch } from "wretch";
+import { Message, MessageAgent } from "./message";
 
 export default class APIClient {
 	private baseURL: string;
@@ -56,5 +57,21 @@ export default class APIClient {
 			.url(`${this.baseURL}/files/save`)
 			.put()
 			.res();
+	}
+
+	sendChatMessage(repo: string, fileName: string, messages: Message[]) {
+		const backendChatMessages = messages.map((m) => ({
+			from_bot: m.from === MessageAgent.QuackOverflow,
+			content: m.content,
+		}));
+		return this.w
+			.json({
+				repo,
+				file_name: fileName,
+				messages: backendChatMessages,
+			})
+			.url(`${this.baseURL}/chat`)
+			.post()
+			.text();
 	}
 }

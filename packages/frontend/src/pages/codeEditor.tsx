@@ -89,7 +89,9 @@ export function CodeEditor() {
 				<p className="fixed top-4 left-4 text-white">Saving...</p>
 			)}
 
-			<Duck />
+			{repo !== undefined && selectedFile !== undefined && (
+				<Duck repo={repo} currentFileName={selectedFile} />
+			)}
 
 			<div className="flex">
 				<Sidebar

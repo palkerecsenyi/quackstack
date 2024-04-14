@@ -29,3 +29,7 @@ func GetFileBucket() string {
 func GetChatbotScriptPath() string {
 	return os.Getenv("QUACK_CHATBOT_PY")
 }
+
+func GetOpenAIKey() string {
+	return os.Getenv("QUACK_OPENAI_KEY")
+}

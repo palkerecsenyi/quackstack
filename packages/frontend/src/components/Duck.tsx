@@ -28,7 +28,13 @@ const allVelocities = [
 	DuckVelocity.Zoomies,
 ];
 
-export default function Duck() {
+export default function Duck({
+	repo,
+	currentFileName,
+}: {
+	repo: string;
+	currentFileName: string;
+}) {
 	const [showChat, setShowChat] = useState(false);
 
 	const [duckDirection, setDuckDirection] = useState(DuckDirection.Left);
@@ -96,7 +102,13 @@ export default function Duck() {
 
 	return (
 		<>
-			{showChat && <Chatbot onClose={() => setShowChat(false)} />}
+			{showChat && (
+				<Chatbot
+					onClose={() => setShowChat(false)}
+					repo={repo}
+					currentFileName={currentFileName}
+				/>
+			)}
 
 			<div className="fixed bottom-0 left-0 h-10 w-full bg-blue-500/80 z-10" />
 			<img

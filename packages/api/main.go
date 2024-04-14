@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"quackstack.palk.me/api/v2/chatbot"
 	"quackstack.palk.me/api/v2/files"
 	"quackstack.palk.me/api/v2/git"
 	"quackstack.palk.me/api/v2/github"
@@ -25,6 +26,8 @@ func main() {
 	r.GET("/git/repos", github.GetRepos)
 	r.POST("/git/clone", git.CloneRepo)
 	r.POST("/git/push", git.PushRepo)
+
+	r.POST("/chat", chatbot.ChatRoute)
 
 	r.Run()
 

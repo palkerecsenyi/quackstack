@@ -9,12 +9,15 @@ RUN go build -v -o /usr/local/bin/app .
 
 FROM docker.io/alpine:3
 RUN apk add python3 py3-pip
-RUN python3 -m venv /opt/venv
-RUN . /opt/venv/bin/activate && pip install openai
+ENV VIRTUALENV=/opt/venv
+RUN python3 -m venv ${VIRTUALENV}
+ENV PATH="${VIRTUALENV}/bin:$PATH"
+
+RUN pip install openai
 
 WORKDIR /opt/app
 COPY --from=gobuild /usr/local/bin/app /opt/app/
 COPY --from=gobuild /usr/src/app/chatbot/chatbot.py /opt/app/
 ENV QUACK_CHATBOT_PY=/opt/app/chatbot.py
 
-CMD [ ".", "/opt/venv/bin/activate", "&&", "/opt/app/app" ]
+CMD [ "/opt/app/app" ]

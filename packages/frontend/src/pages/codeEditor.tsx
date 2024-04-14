@@ -4,6 +4,7 @@ import Sidebar from "../components/sidebar";
 import { useParams } from "react-router-dom";
 import { editor } from "monaco-editor";
 import APIClient from "../data/client";
+import Duck from "../components/Duck";
 
 export function CodeEditor() {
 	const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -69,17 +70,17 @@ export function CodeEditor() {
 	);
 
 	const onSaveClick = useCallback(async () => {
-		if (!owner || !repo) return
+		if (!owner || !repo) return;
 
-		setLoading("Pushing changes...")
-		await new APIClient().pushRepo(owner, repo)
-		setLoading(undefined)
-	}, [owner, repo])
+		setLoading("Pushing changes...");
+		await new APIClient().pushRepo(owner, repo);
+		setLoading(undefined);
+	}, [owner, repo]);
 
 	return (
 		<>
 			{loading && (
-				<div className="fixed top-0 left-0 h-screen w-screen backdrop-brightness-75 backdrop-blur-md z-10">
+				<div className="fixed top-0 left-0 h-screen w-screen backdrop-brightness-75 backdrop-blur-md z-20">
 					<p className="text-center mt-20 text-2xl text-white">{loading}</p>
 				</div>
 			)}
@@ -87,6 +88,8 @@ export function CodeEditor() {
 			{saveLoading && (
 				<p className="fixed top-4 left-4 text-white">Saving...</p>
 			)}
+
+			<Duck />
 
 			<div className="flex">
 				<Sidebar
@@ -105,10 +108,6 @@ export function CodeEditor() {
 						path={selectedFile}
 					/>
 				</div>
-				<img
-					src="../../images/duck.svg"
-					className="absolute bottom-0 right-10 w-28"
-				/>
 			</div>
 		</>
 	);

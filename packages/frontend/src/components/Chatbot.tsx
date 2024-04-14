@@ -1,107 +1,66 @@
-import React, { useEffect, useRef, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
+import { Message, MessageAgent, formatMessageAgent } from "../data/message";
+import { useImmer } from "use-immer";
+import { v4 as uuid } from "uuid";
 
-interface ChatbotProps {
-  onClose: () => void;
+export default function Chatbot({
+	onClose,
+}: {
+	onClose(): void;
+}) {
+	const [messages, updateMessages] = useImmer<Message[]>([
+		{
+			id: "intro",
+			from: MessageAgent.QuackOverflow,
+			content: "Quack! How can I help?",
+		},
+	]);
+
+	const [newMessageText, setNewMessageText] = useState("");
+	const sendMessage = useCallback(
+		(e: FormEvent<HTMLFormElement>) => {
+			e.preventDefault();
+			updateMessages((draft) => {
+				draft.push({
+					id: uuid(),
+					from: MessageAgent.User,
+					content: newMessageText,
+				});
+			});
+			setNewMessageText("");
+		},
+		[newMessageText],
+	);
+
+	return (
+		<div className="fixed bottom-28 right-6 z-10 h-[500px] w-80 p-2 rounded-lg bg-brown flex flex-col">
+			<div className="flex-1 overflow-y-auto">
+				<h2 className="text-xl text-white mb-2">Chat with QuackOverflow</h2>
+
+				{messages.map((msg) => (
+					<div
+						className="flex justify-center flex-col mb-2"
+						style={{
+							alignItems:
+								msg.from === MessageAgent.User ? "flex-end" : "flex-start",
+						}}
+					>
+						<div key={msg.id} className="bg-darkGreen rounded-md p-2 w-10/12">
+							<p>{msg.content}</p>
+						</div>
+						<p className="text-xs mt-1 text-white/60">
+							{formatMessageAgent(msg.from)}
+						</p>
+					</div>
+				))}
+			</div>
+			<form onSubmit={sendMessage}>
+				<input
+					className="bg-darkGreen w-full py-1 px-2 rounded-md"
+					value={newMessageText}
+					onChange={(e) => setNewMessageText(e.target.value)}
+				/>
+			</form>
+		</div>
+	);
 }
-
-export const Chatbot: React.FC<ChatbotProps> = ({ onClose }) => {
-  const [input, setInput] = useState<string>("");
-  const [messages, setMessages] = useState<
-    Array<{ text: string; sender: string }>
-  >([]);
-  const [visibleMessages, setVisibleMessages] = useState<
-    Array<{ text: string; sender: string }>
-  >([]);
-  const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  const loadingRef = useRef(false);
-  const maxVisibleMessages = 10;
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-    // Initially load the last few messages
-    setVisibleMessages(messages.slice(-maxVisibleMessages));
-  }, [messages]);
-
-  useEffect(() => {
-    const container = document.querySelector(".messages-container");
-    const handleScroll = () => {
-      if (
-        container.scrollTop === 0 &&
-        !loadingRef.current &&
-        messages.length > visibleMessages.length
-      ) {
-        loadingRef.current = true;
-        // Simulate loading older messages
-        const moreMessages = messages.slice(
-          -visibleMessages.length - maxVisibleMessages,
-          -visibleMessages.length
-        );
-        setVisibleMessages([...moreMessages, ...visibleMessages]);
-        loadingRef.current = false;
-      }
-    };
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [visibleMessages, messages]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
-
-  const handleSubmit = () => {
-    if (!input.trim()) return;
-    const userMessage = { text: `Me: ${input}`, sender: "user" };
-    const botResponse = { text: `Quack: ${input}`, sender: "bot" };
-    setMessages([...messages, userMessage, botResponse]);
-    setInput("");
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSubmit();
-    }
-  };
-
-  return (
-    <div className="chatbot-container bg-background h-screen flex flex-col relative">
-      <div className="chat-header p-4 border-b border-gray-700 flex justify-between items-center">
-        <p className="text-lg text-white">Quack Overflow</p>
-        <button onClick={onClose} className="close-btn hover:bg-red-700 text-white font-bold py-2 px-3 rounded">
-          X
-        </button>
-      </div>
-
-      <div className="messages-container overflow-y-auto p-4 flex-grow">
-        {visibleMessages.map((message, index) => (
-          <div
-            key={index}
-            className={`message ${
-              message.sender === "user" ? "bg-cream" : "bg-orange"
-            } my-2 p-2 rounded`}
-          >
-            {message.text}
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-
-      <div className="chat-input-container fixed bottom-12 left-7 right-0 p-0 bg-gray-800">
-        <input
-          type="text"
-          value={input}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          className="input-field flex-grow border-gray-400 px-2 bg-white h-12 rounded-lg"
-          placeholder="Type your message..."
-        />
-        <button onClick={handleSubmit} className="send-btn hover:bg-blue-700 text-white font-bold px-2 py-3 rounded-lg">
-          Send
-        </button>
-      </div>
-    </div>
-  );
-};

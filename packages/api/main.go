@@ -23,7 +23,7 @@ func main() {
 		AllowOrigins:     []string{env.GetClientOrigin()},
 		AllowCredentials: true,
 		AllowMethods:     []string{"GET", "POST", "PUT", "OPTIONS"},
-		AllowHeaders:     []string{"Authorization"},
+		AllowHeaders:     []string{"Authorization", "Cookie"},
 		MaxAge:           12 * time.Hour,
 	}))
 
